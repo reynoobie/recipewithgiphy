@@ -1,0 +1,44 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <title>Recipe Search</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel = "stylesheet" href ="style.css">
+    </head>
+
+    <body>
+
+    <div class="container">
+    <div class="header-top">
+        <button id="theme-toggle" class="theme-toggle">🌙 Dark Mode</button>
+    </div>
+    <h1>Search It Daddy!</h1>
+
+    <form class="search-box" id="searchForm">
+        <div class="search-row-primary">
+            <input type="text" id="foodInput" placeholder="What are you craving?" required>
+            <button type="submit" class="btn-search">🔍 Search</button>
+        </div>
+
+        <div class="search-row-secondary">
+            <button type="button" id="randomBtn" class="btn-tool">🎲 Random</button>
+            <button type="button" id="clearBtn" class="btn-tool btn-red">❌ Clear</button>
+        </div>
+    </form>
+
+    <div class="category-container">
+        <button class="cat-btn" onclick="quickSearch('Breakfast')">🍳 Breakfast</button>
+        <button class="cat-btn" onclick="quickSearch('Pasta')">🍝 Lunch</button>
+        <button class="cat-btn" onclick="quickSearch('Chicken')">🍗 Dinner</button>
+        <button class="cat-btn" onclick="quickSearch('Starter')">🍿 Snack</button>
+        <button class="cat-btn" onclick="quickSearch('Dessert')">🍰 Dessert</button>
+    </div>
+
+    <div id="result"></div>
+</div>
+
+    </body> 
+    <script src= "mealdb.js"></script>
+    </html>
