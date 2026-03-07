@@ -6,10 +6,12 @@ if (searchForm) {
   searchForm.addEventListener("submit", function (e) {
     e.preventDefault();
     const food = document.getElementById("foodInput").value.trim();
+
     if (!food) return alert("Please enter a food name!");
-    fetchAndDisplay(
-      `https://www.themealdb.com/api/json/v1/1/search.php?s=${food}`,
-    );
+    if (food.length < 3) return alert("Please enter at least 3 characters!");
+    if (!/^[a-zA-Z\s]+$/.test(food)) return alert("Letters only, no numbers or symbols!");
+
+    fetchAndDisplay(`https://www.themealdb.com/api/json/v1/1/search.php?s=${food}`);
   });
 }
 
@@ -17,7 +19,7 @@ if (searchForm) {
 const randomBtn = document.getElementById("randomBtn");
 if (randomBtn) {
   randomBtn.addEventListener("click", () => {
-    fetchAndDisplay("https://www.themealdb.com/api/json/v1/1/random.php");
+    fetchAndDisplay("https://www.themealdb.com/api/json/v1/1/random.php", true);
   });
 }
 
@@ -39,7 +41,7 @@ if (clearBtn) {
 }
 
 // --- 5. MAIN FETCH FUNCTION ---
-async function fetchAndDisplay(url) {
+async function fetchAndDisplay(url, updateInput = false) {
   const resultDiv = document.getElementById("result");
   const foodInput = document.getElementById("foodInput");
 
@@ -56,7 +58,7 @@ async function fetchAndDisplay(url) {
       const foodName = meal.strMeal;
 
       // Update Input Box with the found food name
-      if (foodInput) {
+    if (updateInput && foodInput) {
         foodInput.value = foodName;
       }
 
@@ -123,6 +125,6 @@ function quickSearch(term) {
   const foodInput = document.getElementById("foodInput");
   if (foodInput) foodInput.value = term;
   fetchAndDisplay(
-    `https://www.themealdb.com/api/json/v1/1/search.php?s=${term}`,
+    `https://www.themealdb.com/api/json/v1/1/search.php?s=${term}` 
   );
 }
