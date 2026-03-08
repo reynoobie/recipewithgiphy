@@ -123,33 +123,6 @@ input:focus {
   background: #e74c3c;
 }
 
-/* --- CATEGORY BUTTONS --- */
-.category-container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 50px;
-}
-
-.cat-btn {
-  padding: 12px 25px;
-  border-radius: 50px;
-  /* Ghost Blue Style */
-  background: transparent;
-  border: 2px solid var(--primary);
-  color: var(--primary);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.cat-btn:hover {
-  background: var(--primary);
-  color: var(--bg-color);
-  transform: translateY(-3px);
-}
 
 /* --- GIF & RECIPE GRIDS --- */
 .gif-section {
