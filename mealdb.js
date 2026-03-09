@@ -9,9 +9,12 @@ if (searchForm) {
 
     if (!food) return alert("Please enter a food name!");
     if (food.length < 3) return alert("Please enter at least 3 characters!");
-    if (!/^[a-zA-Z\s]+$/.test(food)) return alert("Letters only, no numbers or symbols!");
+    if (!/^[a-zA-Z\s]+$/.test(food))
+      return alert("Letters only, no numbers or symbols!");
 
-    fetchAndDisplay(`https://www.themealdb.com/api/json/v1/1/search.php?s=${food}`);
+    fetchAndDisplay(
+      `https://www.themealdb.com/api/json/v1/1/search.php?s=${food}`,
+    );
   });
 }
 
@@ -58,34 +61,89 @@ async function fetchAndDisplay(url, updateInput = false) {
       const foodName = meal.strMeal;
 
       // Update Input Box with the found food name
-    if (updateInput && foodInput) {
+      if (updateInput && foodInput) {
         foodInput.value = foodName;
       }
 
       // Fetch GIFs
-      const giphyUrl = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_KEY}&q=${foodName}+delicious&limit=4`;
-      const giphyResponse = await fetch(giphyUrl);
-      const giphyData = await giphyResponse.json();
+      try {
+        let giphyUrl = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_KEY}&q=${encodeURIComponent(foodName)}+food+cooking+recipe&limit=8&rating=g&lang=en`;
 
-      // Display GIFs
-      if (giphyData.data.length > 0) {
-        const gifSection = document.createElement("div");
-        gifSection.className = "gif-section";
-        gifSection.innerHTML = `<h3>✨ ${foodName} Vibes</h3>`;
+        let giphyResponse = await fetch(giphyUrl);
+        let giphyData = await giphyResponse.json();
 
-        const gifGrid = document.createElement("div");
-        gifGrid.className = "gif-grid";
+        // If no GIFs found, try a fallback search
+        if (!giphyData.data || giphyData.data.length === 0) {
+          giphyUrl = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_KEY}&q=cooking+food+recipe&limit=8&rating=g&lang=en`;
+          giphyResponse = await fetch(giphyUrl);
+          giphyData = await giphyResponse.json();
+        }
 
-        giphyData.data.forEach((gif) => {
-          const img = document.createElement("img");
-          img.src = gif.images.fixed_height.url;
-          gifGrid.appendChild(img);
+        // Filter out memes, keep only food-related GIFs
+        const foodGifs = giphyData.data.filter((gif) => {
+          const title = gif.title?.toLowerCase() || "";
+          const slug = gif.slug?.toLowerCase() || "";
+
+          const excludeKeywords = [
+            "meme",
+            "reaction",
+            "funny",
+            "lol",
+            "wtf",
+            "random",
+            "anime",
+          ];
+          const hasExcluded = excludeKeywords.some(
+            (word) => title.includes(word) || slug.includes(word),
+          );
+
+          const foodKeywords = [
+            "food",
+            "eat",
+            "cook",
+            "cooking",
+            "recipe",
+            "chef",
+            "delicious",
+            foodName.toLowerCase(),
+          ];
+          const hasFood = foodKeywords.some(
+            (word) => title.includes(word) || slug.includes(word),
+          );
+
+          return !hasExcluded && hasFood;
         });
 
-        gifSection.appendChild(gifGrid);
-        resultDiv.appendChild(gifSection);
-      }
+        // If filtering removes everything, use original results
+        const finalGifs = (
+          foodGifs.length > 0 ? foodGifs : giphyData.data
+        ).slice(0, 4);
 
+        // Display GIFs
+        if (finalGifs.length > 0) {
+          const gifSection = document.createElement("div");
+          gifSection.className = "gif-section";
+          gifSection.innerHTML = `<h3>✨ ${foodName} Vibes</h3>`;
+
+          const gifGrid = document.createElement("div");
+          gifGrid.className = "gif-grid";
+
+          finalGifs.forEach((gif) => {
+            const img = document.createElement("img");
+            img.src = gif.images.fixed_height.url;
+            gifGrid.appendChild(img);
+          });
+
+          gifSection.appendChild(gifGrid);
+          resultDiv.appendChild(gifSection);
+        }
+      } catch (error) {
+        console.error("Error fetching GIPHY data:", error);
+
+        const errorMsg = document.createElement("p");
+        errorMsg.textContent = "⚠️ Error fetching GIFs.";
+        resultDiv.appendChild(errorMsg);
+      }
       // Display Recipe
       const recipeGrid = document.createElement("div");
       recipeGrid.className = "recipe-grid";
@@ -125,6 +183,6 @@ function quickSearch(term) {
   const foodInput = document.getElementById("foodInput");
   if (foodInput) foodInput.value = term;
   fetchAndDisplay(
-    `https://www.themealdb.com/api/json/v1/1/search.php?s=${term}` 
+    `https://www.themealdb.com/api/json/v1/1/search.php?s=${term}`,
   );
 }
