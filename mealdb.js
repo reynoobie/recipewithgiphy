@@ -123,7 +123,7 @@ async function fetchAndDisplay(url, updateInput = false) {
         if (finalGifs.length > 0) {
           const gifSection = document.createElement("div");
           gifSection.className = "gif-section";
-          gifSection.innerHTML = `<h3>✨ ${foodName} Vibes</h3>`;
+          
 
           const gifGrid = document.createElement("div");
           gifGrid.className = "gif-grid";
